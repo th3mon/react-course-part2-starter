@@ -14,12 +14,17 @@ const TodoList = () => {
       .get<Todo[]>("https://jsonplaceholder.typicode.com/todos")
       .then((response) => response.data);
 
-  const { data: todos, error } = useQuery<Todo[], Error>({
+  const {
+    data: todos,
+    error,
+    isLoading,
+  } = useQuery<Todo[], Error>({
     queryKey: ["todos"],
     queryFn: fetchTodos,
   });
 
   if (error) return <p>{error.message}</p>;
+  if (isLoading) return <p>Loading Todos</p>;
 
   return (
     <ul className="list-group">
