@@ -5,6 +5,11 @@ import { Todo, todoUrl } from "../hooks/useTodos";
 
 const TodoForm = () => {
   const ref = useRef<HTMLInputElement>(null);
+  const clear = (ref: React.RefObject<HTMLInputElement>) => {
+    if (ref.current) {
+      ref.current.value = "";
+    }
+  };
   const queryClient = useQueryClient();
   const addTodo = useMutation<Todo, Error, Todo>({
     mutationFn: (todo: Todo) =>
@@ -14,6 +19,7 @@ const TodoForm = () => {
       const updateTodos = (todos: Todo[]) => [savedTodo, ...(todos || [])];
 
       queryClient.setQueryData<Todo[]>(["todos"], updateTodos);
+      clear(ref);
     },
   });
 
@@ -41,7 +47,15 @@ const TodoForm = () => {
           <input ref={ref} type="text" className="form-control" />
         </div>
         <div className="col">
-          <button className="btn btn-primary">Add</button>
+          <button className="btn btn-primary" disabled={addTodo.isLoading}>
+            Add
+            {addTodo.isLoading && (
+              <>
+                {" "}
+                <span className="spinner-border spinner-border-sm"></span>
+              </>
+            )}
+          </button>
         </div>
       </form>{" "}
     </>
